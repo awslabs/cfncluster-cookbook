@@ -22,6 +22,8 @@ This file is used to list changes made in each version of the AWS ParallelCluste
 - Fail cluster creation when IMDS lockdown is not working correctly.
 - Make sudoers secure_path include the same directories in every platform.
 - Add support for iptables restore on instance reboot.
+- Support restart/reboot for instance with instance store (ephemeral drives)
+- Remove option for instance store software encryption (encrypted_ephemeral)
 
 2.11.0
 -----
