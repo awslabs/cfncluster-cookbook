@@ -24,6 +24,8 @@ This file is used to list changes made in each version of the AWS ParallelCluste
 - Add support for iptables restore on instance reboot.
 - Allow IMDS access for dcv user when dcv is enabled.
 - Restore ``noatime`` option, which has positive impact on the performances of NFS filesystem
+- Upgrade NVIDIA driver to version 470.57.02.
+- Upgrade CUDA library to version 11.4.0.
 
 2.11.0
 -----

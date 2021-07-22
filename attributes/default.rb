@@ -130,22 +130,30 @@ default['cluster']['munge']['group_id'] = node['cluster']['munge']['user_id']
 
 # NVIDIA
 default['cluster']['nvidia']['enabled'] = 'no'
-default['cluster']['nvidia']['driver_version'] = '460.73.01'
-default['cluster']['nvidia']['driver_url'] = 'https://us.download.nvidia.com/tesla/460.73.01/NVIDIA-Linux-x86_64-460.73.01.run'
-default['cluster']['nvidia']['cuda_version'] = '11.3'
-default['cluster']['nvidia']['cuda_url'] = 'https://developer.download.nvidia.com/compute/cuda/11.3.0/local_installers/cuda_11.3.0_465.19.01_linux.run'
+default['cluster']['nvidia']['driver_version'] = '470.57.02'
+default['cluster']['nvidia']['driver_url'] = 'https://us.download.nvidia.com/tesla/470.57.02/NVIDIA-Linux-x86_64-470.57.02.run'
+
+# Repository for downloading CUDA and FabricManager
+default['cluster']['nvidia']['repository_key'] = "7fa2af80.pub"
+default['cluster']['nvidia']['repository_uri'] = value_for_platform(
+    'default' => "https://developer.download.nvidia._domain_/compute/cuda/repos/rhel7/x86_64",
+    'ubuntu' => { 'default' => "https://developer.download.nvidia._domain_/compute/cuda/repos/#{node['cluster']['base_os']}/x86_64" }
+)
+
+# CUDA
+default['cluster']['nvidia']['cuda']['package'] = "cuda-11-4"
+default['cluster']['nvidia']['cuda_version'] = value_for_platform(
+    'default' => "11.4.0",
+    # with apt a star is needed to match the package version
+    'ubuntu' => "11.4.0*"
+)
 
 # NVIDIA fabric-manager
-default['cluster']['nvidia']['fabricmanager']['package'] = "nvidia-fabricmanager-460"
-default['cluster']['nvidia']['fabricmanager']['repository_key'] = "7fa2af80.pub"
+default['cluster']['nvidia']['fabricmanager']['package'] = "nvidia-fabricmanager-470"
 default['cluster']['nvidia']['fabricmanager']['version'] = value_for_platform(
   'default' => node['cluster']['nvidia']['driver_version'],
   # with apt a star is needed to match the package version
   'ubuntu' => { 'default' => "#{node['cluster']['nvidia']['driver_version']}*" }
-)
-default['cluster']['nvidia']['fabricmanager']['repository_uri'] = value_for_platform(
-  'default' => "https://developer.download.nvidia._domain_/compute/cuda/repos/rhel7/x86_64",
-  'ubuntu' => { 'default' => "https://developer.download.nvidia._domain_/compute/cuda/repos/#{node['cluster']['base_os']}/x86_64" }
 )
 
 # EFA

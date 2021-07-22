@@ -40,29 +40,6 @@ if node['cluster']['nvidia']['enabled'] == 'yes' || node['cluster']['nvidia']['e
     creates '/usr/bin/nvidia-smi'
   end
 
-  # Get CUDA run file
-  cuda_tmp_runfile = "/tmp/cuda.run"
-  remote_file cuda_tmp_runfile do
-    source node['cluster']['nvidia']['cuda_url']
-    mode '0755'
-    retries 3
-    retry_delay 5
-    not_if { ::File.exist?("/usr/local/cuda-#{node['cluster']['nvidia']['cuda_version']}") }
-  end
-
-  # Install CUDA driver
-  bash 'cuda.run advanced' do
-    user 'root'
-    group 'root'
-    cwd '/tmp'
-    code <<-CUDA
-      set -e
-      ./cuda.run --silent --toolkit
-      rm -f /tmp/cuda.run
-    CUDA
-    creates "/usr/local/cuda-#{node['cluster']['nvidia']['cuda_version']}"
-  end
-
   cookbook_file 'blacklist-nouveau.conf' do
     path '/etc/modprobe.d/blacklist-nouveau.conf'
     owner 'root'
@@ -77,20 +54,27 @@ if node['cluster']['nvidia']['enabled'] == 'yes' || node['cluster']['nvidia']['e
     end
   end
 
-  # Install NVIDIA Fabric Manager
+  # Add package repository
   repo_domain = "com"
   repo_domain = "cn" if node['cluster']['region'].start_with?("cn-")
-  repo_uri = node['cluster']['nvidia']['fabricmanager']['repository_uri'].gsub('_domain_', repo_domain)
+  repo_uri = node['cluster']['nvidia']['repository_uri'].gsub('_domain_', repo_domain)
   add_package_repository(
-    "nvidia-fm-repo",
+    "nvidia-repo",
     repo_uri,
-    "#{repo_uri}/#{node['cluster']['nvidia']['fabricmanager']['repository_key']}",
+    "#{repo_uri}/#{node['cluster']['nvidia']['repository_key']}",
     "/"
   )
 
+  # Install CUDA Driver
+  package node['cluster']['nvidia']['cuda']['package'] do
+    version node['cluster']['nvidia']['cuda']['version']
+  end
+
+  # Install NVIDIA Fabric Manager
   package node['cluster']['nvidia']['fabricmanager']['package'] do
     version node['cluster']['nvidia']['fabricmanager']['version']
   end
 
-  remove_package_repository("nvidia-fm-repo")
+  # Remove package repository
+  remove_package_repository("nvidia-repo")
 end
