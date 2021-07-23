@@ -26,6 +26,7 @@ This file is used to list changes made in each version of the AWS ParallelCluste
 - Restore ``noatime`` option, which has positive impact on the performances of NFS filesystem
 - Upgrade NICE DCV to version 2021.1-10598.
 - Upgrade Slurm to version 20.11.8
+- Upgrade Cinc Client to version 17.2.29.
 
 2.11.0
 -----
